@@ -1,0 +1,29 @@
+# VCS
+.git
+.gitignore
+
+# Node / frontend artifacts
+node_modules
+dist
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Java / Maven artifacts
+target
+.mvn
+
+# IDE / editor files
+.idea
+.vscode
+*.iml
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Project-local agent/cache folders
+.cursor
+archive
+
