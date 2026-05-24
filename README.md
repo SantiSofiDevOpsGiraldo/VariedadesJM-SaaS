@@ -1,4 +1,4 @@
-# 💰 Caja Clara SaaS (Java + React)
+# 💰 Variedades JM - POS SaaS (Java + React)
 
 **Sistema de Punto de Venta (POS) para la gestión de inventario, ventas y caja en pequeñas y medianas empresas**
 
@@ -6,7 +6,7 @@
 
 ## 📌 Descripción del Proyecto
 
-**Caja Clara SaaS** es una solución tecnológica orientada a la digitalización de negocios como misceláneas, tiendas de barrio y emprendimientos locales.
+**Variedades JM - POS SaaS** es una solución tecnológica orientada a la digitalización de negocios como misceláneas, tiendas de barrio y emprendimientos locales.
 
 El sistema permite gestionar de manera eficiente procesos clave como ventas, inventario, control de caja y administración de usuarios, mediante una arquitectura moderna **full stack**.
 
@@ -85,10 +85,10 @@ El proyecto sigue una arquitectura cliente-servidor con separación de responsab
 ## 📁 Estructura del Proyecto
 
 ```text
-CajaClaraSAAS_JAVA/
+VariedadesJM_JAVA/
   src/
     main/
-      java/com/cajaclara/        # Backend (Spring Boot)
+      java/com/variedadesjm/     # Backend (Spring Boot)
       resources/
         application.properties
         db/migration/            # Migraciones Flyway
@@ -127,7 +127,7 @@ src/main/resources/application.properties
 
 Configuraciones por defecto:
 
-* Base de datos: `caja_clara`
+* Base de datos: `variedadesjm`
 * Usuario: `root`
 * Contraseña: `rootpassword`
 * Puerto backend: `8080`
@@ -142,9 +142,9 @@ Configuraciones por defecto:
 **Opción Docker:**
 
 ```bash
-docker run --name caja-clara-mysql ^
+docker run --name variedades-jm-mysql ^
   -e MYSQL_ROOT_PASSWORD=rootpassword ^
-  -e MYSQL_DATABASE=caja_clara ^
+  -e MYSQL_DATABASE=variedadesjm ^
   -p 3307:3306 ^
   -d mysql:8.0
 ```
@@ -165,8 +165,8 @@ http://localhost:8080
 ### 3. Frontend (React)
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 Disponible en:
@@ -185,7 +185,7 @@ mvn -DskipTests package
 Ejecutar:
 
 ```bash
-java -jar target/backend-caja-clara-1.0.0.jar
+java -jar target/backend-variedades-jm-1.0.0.jar
 ```
 
 ---
@@ -193,7 +193,7 @@ java -jar target/backend-caja-clara-1.0.0.jar
 ### Frontend
 
 ```bash
-npm run build
+pnpm build
 ```
 
 Salida en carpeta:
@@ -201,6 +201,60 @@ Salida en carpeta:
 ```bash
 dist/
 ```
+
+## ⚙️ Uso de pnpm (reemplazo de npm)
+
+Este repositorio usa `pnpm` como gestor de paquetes. Recomendado usar `corepack` para controlar la versión de `pnpm` en entornos CI/Docker.
+
+- Instalar/activar `pnpm` con Corepack (local/CI):
+
+```bash
+corepack enable
+corepack prepare pnpm@latest --activate
+pnpm -v
+```
+
+- Instalar dependencias y ejecutar en desarrollo:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+- Construir para producción:
+
+```bash
+pnpm build
+```
+
+- Aprobación de build scripts (si pnpm muestra advertencia):
+
+```bash
+pnpm approve-builds
+```
+
+### Ejemplo para CI / Dockerfile
+
+En pipelines o `Dockerfile` use `corepack` antes de instalar y fije el lockfile:
+
+```dockerfile
+# copiar lockfile y package.json primero para aprovechar cache
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && corepack prepare pnpm@latest --activate \
+  && pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm run build
+```
+
+En CI, reemplace `npm ci` / `npm install` por:
+
+```bash
+corepack enable
+corepack prepare pnpm@latest --activate
+pnpm install --frozen-lockfile
+pnpm run build
+```
+
 
 ---
 
