@@ -1,1 +1,9 @@
 node_modules
+target/
+*.jar
+*.class
+.idea/
+.apps.tsbuildinfo
+
+dist/
+*.tsbuildinfo
