@@ -1,13 +1,13 @@
 -- V2__seed_data.sql
--- Caja Clara POS - Seed Data
+-- Variedades JM POS - Seed Data
 
 -- Admin user: password = BCrypt hash of "admin123"
 INSERT INTO users (username, email, password, full_name, role, active, created_at)
-VALUES ('admin', 'admin@cajaclara.com', '$2a$10$MXKGQRMvtdSLgOcPzhRtFuoeYehsXACNSr6wSwuU/pL5b9AzFCh9K', 'Admin Principal', 'ADMIN', TRUE, NOW());
+VALUES ('admin', 'admin@variedadesjm.com', '$2a$10$MXKGQRMvtdSLgOcPzhRtFuoeYehsXACNSr6wSwuU/pL5b9AzFCh9K', 'Admin Principal', 'ADMIN', TRUE, NOW());
 
 -- Cashier user: password = BCrypt hash of "cajero123"
 INSERT INTO users (username, email, password, full_name, role, active, created_at)
-VALUES ('cajero', 'cajero@cajaclara.com', '$2a$10$csqlIEOJnYbf5IU1IE8V4ODXABJbvANHIYuaspDr.nEE7NBnvy98G', 'Cajero 1', 'CAJERO', TRUE, NOW());
+VALUES ('cajero', 'cajero@variedadesjm.com', '$2a$10$csqlIEOJnYbf5IU1IE8V4ODXABJbvANHIYuaspDr.nEE7NBnvy98G', 'Cajero 1', 'CAJERO', TRUE, NOW());
 
 -- 10 sample products
 INSERT INTO products (code, name, category, price, stock, status, created_at)

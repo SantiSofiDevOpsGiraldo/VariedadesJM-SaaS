@@ -5,6 +5,10 @@ interface AuthUser {
   username: string;
   fullName: string;
   role: string;
+  companyId?: number | null;
+  companyName?: string | null;
+  onboardingCompleted?: boolean;
+  authProvider?: string | null;
 }
 
 interface AuthState {
@@ -16,23 +20,23 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: (() => {
-    const stored = localStorage.getItem('caja_clara_user');
+    const stored = localStorage.getItem('variedades_jm_user');
     return stored ? JSON.parse(stored) : null;
   })(),
   setUser: (user) => {
     if (user) {
-      localStorage.setItem('caja_clara_token', user.token);
-      localStorage.setItem('caja_clara_user', JSON.stringify(user));
+      localStorage.setItem('variedades_jm_token', user.token);
+      localStorage.setItem('variedades_jm_user', JSON.stringify(user));
     } else {
-      localStorage.removeItem('caja_clara_token');
-      localStorage.removeItem('caja_clara_user');
+      localStorage.removeItem('variedades_jm_token');
+      localStorage.removeItem('variedades_jm_user');
     }
     set({ user });
   },
   logout: () => {
-    localStorage.removeItem('caja_clara_token');
-    localStorage.removeItem('caja_clara_user');
+    localStorage.removeItem('variedades_jm_token');
+    localStorage.removeItem('variedades_jm_user');
     set({ user: null });
   },
-  isAdmin: () => get().user?.role === 'ADMIN',
+  isAdmin: () => ['OWNER', 'ADMIN'].includes(get().user?.role || ''),
 }));

@@ -13,7 +13,7 @@ export function Chatbot() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'assistant',
-      content: '¡Hola! Soy el asistente de Caja Clara. ¿En qué puedo ayudarte hoy?',
+      content: '¡Hola! Soy el asistente de Variedades JM. ¿En qué puedo ayudarte hoy?',
       timestamp: new Date(),
     },
   ]);
@@ -82,7 +82,7 @@ export function Chatbot() {
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5" />
               <div>
-                <h3 className="font-headline font-semibold text-sm">Asistente Caja Clara</h3>
+                <h3 className="font-headline font-semibold text-sm">Asistente Variedades JM</h3>
                 <p className="text-[10px] text-white/70">En línea</p>
               </div>
             </div>

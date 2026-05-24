@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('caja_clara_token');
+  const token = localStorage.getItem('variedades_jm_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -17,8 +17,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('caja_clara_token');
-      localStorage.removeItem('caja_clara_user');
+      localStorage.removeItem('variedades_jm_token');
+      localStorage.removeItem('variedades_jm_user');
       window.location.href = '/';
     }
     return Promise.reject(error);

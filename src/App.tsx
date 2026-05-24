@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/components/AuthProvider';
 import { Layout } from '@/components/Layout';
@@ -11,6 +11,7 @@ import Cash from '@/pages/Cash';
 import Affiliates from '@/pages/Affiliates';
 import Reports from '@/pages/Reports';
 import Settings from '@/pages/Settings';
+import GoogleOAuthCallback from '@/pages/GoogleOAuthCallback';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,6 +39,8 @@ function App() {
                 <Route path="/affiliates" element={<Affiliates />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/onboarding" element={<Navigate to="/" replace />} />
+                <Route path="/auth/google/callback" element={<GoogleOAuthCallback />} />
               </Route>
             </Routes>
           </BrowserRouter>

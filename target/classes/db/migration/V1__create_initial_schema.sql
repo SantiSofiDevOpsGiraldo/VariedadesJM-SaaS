@@ -1,5 +1,5 @@
 -- V1__create_initial_schema.sql
--- Caja Clara POS - Initial Database Schema
+-- Variedades JM POS - Initial Database Schema
 
 CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

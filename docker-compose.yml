@@ -4,11 +4,11 @@ services:
   # ──────────────────────────────────────────────
   mysql:
     image: mysql:8.0
-    container_name: caja-clara-mysql
+    container_name: variedades-jm-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: caja_clara
+      MYSQL_DATABASE: variedadesjm
       MYSQL_CHARACTER_SET_SERVER: utf8mb4
       MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
     ports:
@@ -16,7 +16,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
-      - caja-clara-network
+      - variedades-jm-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
       interval: 10s
@@ -30,21 +30,24 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    container_name: caja-clara-backend
+    container_name: variedades-jm-backend
     restart: unless-stopped
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/caja_clara?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Bogota
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/variedadesjm?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Bogota
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: rootpassword
-      JWT_SECRET: cajaClaraSuperSecretKey2024ForJWTTokenGenerationAndValidation
+      JWT_SECRET: variedadesJmSuperSecretKey2026ForJWTTokenGenerationAndValidation
       JWT_EXPIRATION: 86400000
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-http://localhost:80/auth/google/callback}
     ports:
       - "8080:8080"
     depends_on:
       mysql:
         condition: service_healthy
     networks:
-      - caja-clara-network
+      - variedades-jm-network
 
   # ──────────────────────────────────────────────
   # React Frontend (Nginx)
@@ -53,14 +56,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: caja-clara-frontend
+      args:
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+        VITE_GOOGLE_REDIRECT_URI: ${VITE_GOOGLE_REDIRECT_URI:-http://localhost/auth/google/callback}
+    container_name: variedades-jm-frontend
     restart: unless-stopped
     ports:
       - "80:80"
     depends_on:
       - backend
     networks:
-      - caja-clara-network
+      - variedades-jm-network
 
 # ──────────────────────────────────────────────
 # Volumes
@@ -73,5 +79,5 @@ volumes:
 # Networks
 # ──────────────────────────────────────────────
 networks:
-  caja-clara-network:
+  variedades-jm-network:
     driver: bridge

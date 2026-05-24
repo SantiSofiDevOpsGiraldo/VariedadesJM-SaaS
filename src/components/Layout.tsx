@@ -55,7 +55,7 @@ export function Layout() {
             <Store className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="font-headline font-bold text-[#202983] text-lg leading-tight">Caja Clara</h1>
+            <h1 className="font-headline font-bold text-[#202983] text-lg leading-tight">Variedades JM</h1>
             <p className="text-[10px] text-outline font-medium">Sistema POS</p>
           </div>
           <button
@@ -99,7 +99,10 @@ export function Layout() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-on-surface truncate">{user?.fullName}</p>
-              <p className="text-xs text-outline truncate">{user?.role === 'ADMIN' ? 'Administrador' : 'Cajero'}</p>
+              <p className="text-xs text-outline truncate">
+                {user?.role === 'OWNER' ? 'Propietario' : user?.role === 'ADMIN' ? 'Administrador' : 'Empleado'}
+                {user?.companyName ? ` · ${user.companyName}` : ''}
+              </p>
             </div>
             <button
               onClick={logout}

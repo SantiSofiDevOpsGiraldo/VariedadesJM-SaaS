@@ -23,10 +23,10 @@ export default function Settings() {
   const [saved, setSaved] = useState(false);
 
   const [general, setGeneral] = useState({
-    storeName: 'Caja Clara',
+    storeName: 'Variedades JM',
     address: 'Calle 10 # 5-23, Bogotá',
     phone: '601-234-5678',
-    email: 'contacto@cajaclara.com',
+    email: 'contacto@variedadesjm.com',
     nit: '900.123.456-7',
   });
 
