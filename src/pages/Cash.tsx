@@ -206,7 +206,10 @@ export default function Cash() {
           <p className="text-on-surface-variant text-sm mt-1">Gestión de caja diaria</p>
         </div>
         <button
-          onClick={() => setShowCloseModal(true)}
+          onClick={() => {
+            setCloseForm({ actualTotal: expectedTotal, description: '' });
+            setShowCloseModal(true);
+          }}
           className="inline-flex items-center gap-2 bg-error hover:bg-error/90 text-white font-medium py-2.5 px-4 rounded-xl transition-colors text-sm"
         >
           <Lock className="w-4 h-4" />

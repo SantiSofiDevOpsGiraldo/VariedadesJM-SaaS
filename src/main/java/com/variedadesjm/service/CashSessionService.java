@@ -33,7 +33,12 @@ public class CashSessionService {
     @Transactional(readOnly = true)
     public CashSessionResponse getActiveSession() {
                 CashSession session = cashSessionRepository.findByStatusAndCompany_Id(CashSessionStatus.ABIERTA, requireCompanyId())
-                .orElseThrow(() -> new ResourceNotFoundException("Sesión de caja", "status", "ABIERTA"));
+                                .orElse(null);
+
+                if (session == null) {
+                        return null;
+                }
+
         return buildSessionResponseWithTotals(session);
     }
 

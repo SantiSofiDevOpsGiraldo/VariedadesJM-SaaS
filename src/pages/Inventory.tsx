@@ -22,7 +22,7 @@ export default function Inventory() {
   const [form, setForm] = useState({
     code: '',
     name: '',
-    category: 'Papelería',
+    category: 'PAPELERIA',
     price: 0,
     stock: 0,
     status: 'ACTIVE',
@@ -66,7 +66,7 @@ export default function Inventory() {
 
   const openCreate = () => {
     setEditProduct(null);
-    setForm({ code: '', name: '', category: 'Papelería', price: 0, stock: 0, status: 'ACTIVE' });
+    setForm({ code: '', name: '', category: 'PAPELERIA', price: 0, stock: 0, status: 'ACTIVE' });
     setShowModal(true);
   };
 
@@ -318,10 +318,11 @@ export default function Inventory() {
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                   className="w-full px-3 py-2.5 rounded-xl border border-outline-variant bg-surface-container-lowest text-sm focus:outline-none focus:ring-2 focus:ring-[#202983]"
                 >
-                  <option>Papelería</option>
-                  <option>Regalos</option>
-                  <option>Fotocopias</option>
-                  <option>Dulces</option>
+                  <option value="PAPELERIA">Papelería</option>
+                  <option value="REGALOS">Regalos</option>
+                  <option value="FOTOCOPIAS">Fotocopias</option>
+                  <option value="DULCES">Dulces</option>
+                  <option value="OTRO">Otro</option>
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">

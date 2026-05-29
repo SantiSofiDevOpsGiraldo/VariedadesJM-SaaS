@@ -18,6 +18,18 @@ import {
 } from 'lucide-react';
 import type { ServiceOrder } from '@/types';
 
+const serviceTypeOptions = [
+  { value: 'IMPRESION', label: 'Impresión' },
+  { value: 'PERSONALIZACION', label: 'Personalización' },
+  { value: 'ANCHETA', label: 'Ancheta' },
+  { value: 'OTRO', label: 'Otro' },
+];
+
+const serviceTypeLabels: Record<string, string> = serviceTypeOptions.reduce(
+  (labels, option) => ({ ...labels, [option.value]: option.label }),
+  {}
+);
+
 const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
   PENDING: { label: 'Pendiente', color: 'bg-amber-100 text-amber-700', icon: Clock },
   IN_PROGRESS: { label: 'En Progreso', color: 'bg-blue-100 text-blue-700', icon: AlertCircle },
@@ -35,7 +47,7 @@ export default function Services() {
     title: '',
     clientName: '',
     phone: '',
-    type: 'Impresión',
+    type: 'IMPRESION',
     budget: 0,
     advance: 0,
     method: 'EFECTIVO',
@@ -61,7 +73,7 @@ export default function Services() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['services'] });
       setShowNewModal(false);
-      setNewForm({ title: '', clientName: '', phone: '', type: 'Impresión', budget: 0, advance: 0, method: 'EFECTIVO' });
+      setNewForm({ title: '', clientName: '', phone: '', type: 'IMPRESION', budget: 0, advance: 0, method: 'EFECTIVO' });
     },
   });
 
@@ -219,7 +231,7 @@ export default function Services() {
                           {service.clientName} · {service.phone}
                         </p>
                         <p className="text-xs text-on-surface-variant mt-1">
-                          Tipo: {service.type} · Presupuesto: ${service.budget.toLocaleString('es-CO')}
+                          Tipo: {serviceTypeLabels[service.type] || service.type} · Presupuesto: ${service.budget.toLocaleString('es-CO')}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
@@ -385,10 +397,11 @@ export default function Services() {
                   onChange={(e) => setNewForm({ ...newForm, type: e.target.value })}
                   className="w-full px-3 py-2.5 rounded-xl border border-outline-variant bg-surface-container-lowest text-sm focus:outline-none focus:ring-2 focus:ring-[#202983]"
                 >
-                  <option>Impresión</option>
-                  <option>Fotocopia</option>
-                  <option>Empastado</option>
-                  <option>Otro</option>
+                  {serviceTypeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">

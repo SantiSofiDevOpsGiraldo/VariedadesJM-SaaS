@@ -4,6 +4,14 @@
 
 ---
 
+## 📚 Documentación del Sistema
+
+Este proyecto cuenta con una documentación técnica y de negocio exhaustiva diseñada para ser entendida por ingenieros y agentes de IA.
+
+👉 **[Índice de Documentación](docs/index.md)**
+
+---
+
 ## 📌 Descripción del Proyecto
 
 **Variedades JM - POS SaaS** es una solución tecnológica orientada a la digitalización de negocios como misceláneas, tiendas de barrio y emprendimientos locales.

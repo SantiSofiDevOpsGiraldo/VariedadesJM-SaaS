@@ -11,10 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -46,11 +47,10 @@ public class SaleController {
 
     @GetMapping("/by-date")
     public ResponseEntity<List<SaleResponse>> getByDateRange(
-            @RequestParam String from,
-            @RequestParam String to) {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        LocalDateTime fromDateTime = LocalDateTime.parse(from, formatter);
-        LocalDateTime toDateTime = LocalDateTime.parse(to, formatter);
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        LocalDateTime fromDateTime = from.atStartOfDay();
+        LocalDateTime toDateTime = to.plusDays(1).atStartOfDay().minusNanos(1);
         return ResponseEntity.ok(saleService.getByDateRange(fromDateTime, toDateTime));
     }
 }
