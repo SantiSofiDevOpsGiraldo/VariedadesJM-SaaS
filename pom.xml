@@ -138,6 +138,24 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <!-- Repository-scoped toolchains file (optional). We do not bind the
+                         `toolchain` goal to the default lifecycle to avoid build failure
+                         when a matching toolchain is not installed on the runner.
+                         CI should still set up Temurin 21 using actions/setup-java. -->
+                    <toolchainsFile>${project.basedir}/.github/maven/toolchains.xml</toolchainsFile>
+                    <toolchains>
+                        <jdk>
+                            <version>21</version>
+                            <vendor>eclipse-temurin</vendor>
+                        </jdk>
+                    </toolchains>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
