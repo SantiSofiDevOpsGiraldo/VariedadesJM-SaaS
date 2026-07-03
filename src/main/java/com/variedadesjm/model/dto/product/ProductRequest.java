@@ -35,5 +35,9 @@ public class ProductRequest {
     @Size(max = 500)
     private String img;
 
+    @Size(max = 500)
+    @Pattern(regexp = "^$|^(https?://).+", message = "La URL de imagen debe ser válida")
+    private String imageUrl;
+
     private ProductStatus status;
 }

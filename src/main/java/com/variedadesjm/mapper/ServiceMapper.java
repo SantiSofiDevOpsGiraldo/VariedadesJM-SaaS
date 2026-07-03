@@ -5,6 +5,7 @@ import com.variedadesjm.model.dto.service.ServiceResponse;
 import com.variedadesjm.model.entity.Service;
 import com.variedadesjm.model.entity.ServicePayment;
 import com.variedadesjm.model.enums.ServiceStatus;
+import com.variedadesjm.util.InputSanitizer;
 
 import java.math.BigDecimal;
 import java.util.stream.Collectors;
@@ -15,9 +16,9 @@ public class ServiceMapper {
 
     public static Service toEntity(ServiceRequest request) {
         return Service.builder()
-                .title(request.getTitle())
-                .clientName(request.getClientName())
-                .phone(request.getPhone())
+                .title(InputSanitizer.clean(request.getTitle()))
+                .clientName(InputSanitizer.clean(request.getClientName()))
+                .phone(InputSanitizer.clean(request.getPhone()))
                 .type(request.getType())
                 .budget(request.getBudget())
                 .advance(BigDecimal.ZERO)
@@ -54,9 +55,9 @@ public class ServiceMapper {
     }
 
     public static void updateEntity(Service service, ServiceRequest request) {
-        service.setTitle(request.getTitle());
-        service.setClientName(request.getClientName());
-        service.setPhone(request.getPhone());
+        service.setTitle(InputSanitizer.clean(request.getTitle()));
+        service.setClientName(InputSanitizer.clean(request.getClientName()));
+        service.setPhone(InputSanitizer.clean(request.getPhone()));
         service.setType(request.getType());
         service.setBudget(request.getBudget());
     }

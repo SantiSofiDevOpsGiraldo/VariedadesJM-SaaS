@@ -14,6 +14,7 @@ import com.variedadesjm.model.enums.TransactionType;
 import com.variedadesjm.repository.CashSessionRepository;
 import com.variedadesjm.repository.CashTransactionRepository;
 import com.variedadesjm.security.TenantContext;
+import com.variedadesjm.util.InputSanitizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +54,7 @@ public class CashSessionService {
         CashSession session = CashSession.builder()
                 .openedAt(LocalDateTime.now())
                 .company(Company.builder().id(companyId).build())
-                .openedBy(openedBy)
+                .openedBy(InputSanitizer.clean(openedBy))
                 .initialBase(request.getInitialBase())
                 .status(CashSessionStatus.ABIERTA)
                 .expectedTotal(request.getInitialBase())
@@ -80,7 +81,7 @@ public class CashSessionService {
                 .orElseThrow(() -> new BusinessException("No hay una sesión de caja abierta para cerrar."));
 
         session.setClosedAt(LocalDateTime.now());
-        session.setClosedBy(closedBy);
+        session.setClosedBy(InputSanitizer.clean(closedBy));
         session.setActualTotal(request.getActualTotal());
         session.setStatus(CashSessionStatus.CERRADA);
 
@@ -122,9 +123,9 @@ public class CashSessionService {
                 .session(activeSession)
                 .type(request.getType())
                 .amount(request.getAmount())
-                .description(request.getDescription())
+                .description(InputSanitizer.clean(request.getDescription()))
                 .method(request.getMethod())
-                .referenceId(request.getReferenceId())
+                .referenceId(InputSanitizer.clean(request.getReferenceId()))
                 .build();
 
         transaction = cashTransactionRepository.save(transaction);

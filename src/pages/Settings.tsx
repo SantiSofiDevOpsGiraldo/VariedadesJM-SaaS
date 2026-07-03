@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Settings as SettingsIcon,
   User,
@@ -8,7 +8,11 @@ import {
   Store,
   Save,
   CheckCircle2,
+  Image,
+  Moon,
+  SunMedium,
 } from 'lucide-react';
+import { applyAppearance, loadAppearance, saveAppearance } from '@/lib/appearance';
 
 const tabs = [
   { id: 'general', label: 'General', icon: Store },
@@ -44,11 +48,26 @@ export default function Settings() {
     cashClose: true,
   });
 
-  const [appearance, setAppearance] = useState({
-    theme: 'light',
-    fontSize: 'medium',
-    compactMode: false,
-  });
+  const [appearance, setAppearance] = useState(loadAppearance());
+
+  useEffect(() => {
+    applyAppearance(appearance);
+    saveAppearance(appearance);
+  }, [appearance]);
+
+  const previewStyle = useMemo(
+    () => ({
+      backgroundColor: appearance.backgroundColor,
+      backgroundImage:
+        appearance.backgroundMode === 'image' && appearance.backgroundImageUrl
+          ? `linear-gradient(rgba(10, 12, 18, 0.4), rgba(10, 12, 18, 0.4)), url("${appearance.backgroundImageUrl}")`
+          : 'none',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    }),
+    [appearance.backgroundColor, appearance.backgroundImageUrl, appearance.backgroundMode]
+  );
 
   const handleSave = () => {
     setSaved(true);
@@ -93,7 +112,7 @@ export default function Settings() {
 
         {/* Content */}
         <div className="flex-1">
-          <div className="bg-white rounded-2xl border border-outline-variant p-6">
+          <div className="bg-white rounded-2xl border border-outline-variant p-6 dark:bg-slate-900 dark:border-slate-800 transition-colors">
             {activeTab === 'general' && (
               <div className="space-y-5">
                 <div>
@@ -272,68 +291,161 @@ export default function Settings() {
                   <h2 className="font-headline font-semibold text-on-surface mb-1">Apariencia</h2>
                   <p className="text-sm text-on-surface-variant">Personalizar la interfaz</p>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-on-surface mb-2">Tema</label>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setAppearance({ ...appearance, theme: 'light' })}
-                      className={`flex-1 p-4 rounded-xl border-2 transition-colors ${
-                        appearance.theme === 'light'
-                          ? 'border-[#202983] bg-white'
-                          : 'border-outline-variant bg-white'
-                      }`}
-                    >
-                      <div className="w-full h-8 bg-surface rounded mb-2" />
-                      <p className="text-xs font-medium text-on-surface">Claro</p>
-                    </button>
-                    <button
-                      onClick={() => setAppearance({ ...appearance, theme: 'dark' })}
-                      className={`flex-1 p-4 rounded-xl border-2 transition-colors ${
-                        appearance.theme === 'dark'
-                          ? 'border-[#202983] bg-white'
-                          : 'border-outline-variant bg-white'
-                      }`}
-                    >
-                      <div className="w-full h-8 bg-gray-800 rounded mb-2" />
-                      <p className="text-xs font-medium text-on-surface">Oscuro</p>
-                    </button>
+                <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-on-surface mb-2">Tema</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setAppearance({ ...appearance, theme: 'light' })}
+                          className={`flex items-center justify-between gap-3 p-4 rounded-xl border-2 transition-colors ${
+                            appearance.theme === 'light'
+                              ? 'border-[#202983] bg-white dark:bg-slate-800'
+                              : 'border-outline-variant bg-white dark:bg-slate-900'
+                          }`}
+                        >
+                          <div className="text-left">
+                            <p className="text-sm font-medium text-on-surface">Claro</p>
+                            <p className="text-xs text-on-surface-variant">Interfaz luminosa</p>
+                          </div>
+                          <SunMedium className="w-5 h-5 text-[#202983]" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setAppearance({ ...appearance, theme: 'dark' })}
+                          className={`flex items-center justify-between gap-3 p-4 rounded-xl border-2 transition-colors ${
+                            appearance.theme === 'dark'
+                              ? 'border-[#202983] bg-white dark:bg-slate-800'
+                              : 'border-outline-variant bg-white dark:bg-slate-900'
+                          }`}
+                        >
+                          <div className="text-left">
+                            <p className="text-sm font-medium text-on-surface">Oscuro</p>
+                            <p className="text-xs text-on-surface-variant">Modo nocturno</p>
+                          </div>
+                          <Moon className="w-5 h-5 text-[#202983]" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-on-surface mb-2">Fondo de la aplicación</label>
+                      <div className="flex gap-2 mb-3">
+                        <button
+                          type="button"
+                          onClick={() => setAppearance({ ...appearance, backgroundMode: 'color' })}
+                          className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                            appearance.backgroundMode === 'color'
+                              ? 'bg-[#202983] text-white'
+                              : 'bg-surface-container text-on-surface-variant'
+                          }`}
+                        >
+                          Color
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setAppearance({ ...appearance, backgroundMode: 'image' })}
+                          className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                            appearance.backgroundMode === 'image'
+                              ? 'bg-[#202983] text-white'
+                              : 'bg-surface-container text-on-surface-variant'
+                          }`}
+                        >
+                          Imagen
+                        </button>
+                      </div>
+                      {appearance.backgroundMode === 'color' ? (
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={appearance.backgroundColor}
+                            onChange={(e) => setAppearance({ ...appearance, backgroundColor: e.target.value })}
+                            className="h-12 w-16 rounded-xl border border-outline-variant bg-white p-1"
+                          />
+                          <input
+                            type="text"
+                            value={appearance.backgroundColor}
+                            onChange={(e) => setAppearance({ ...appearance, backgroundColor: e.target.value })}
+                            className="w-full px-3 py-2.5 rounded-xl border border-outline-variant bg-surface-container-lowest text-sm focus:outline-none focus:ring-2 focus:ring-[#202983]"
+                            placeholder="#f9f9f9"
+                          />
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Image className="w-4 h-4 text-[#202983]" />
+                            <span className="text-xs text-on-surface-variant">URL de imagen de fondo</span>
+                          </div>
+                          <input
+                            type="url"
+                            value={appearance.backgroundImageUrl}
+                            onChange={(e) => setAppearance({ ...appearance, backgroundImageUrl: e.target.value })}
+                            className="w-full px-3 py-2.5 rounded-xl border border-outline-variant bg-surface-container-lowest text-sm focus:outline-none focus:ring-2 focus:ring-[#202983]"
+                            placeholder="https://..."
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-on-surface mb-2">Vista previa</label>
+                      <div className="min-h-44 rounded-2xl border border-outline-variant overflow-hidden shadow-sm" style={previewStyle}>
+                        <div className="min-h-44 bg-black/20 p-4 flex items-end">
+                          <div className="bg-white/90 dark:bg-slate-900/85 backdrop-blur rounded-2xl p-4 max-w-xs border border-white/40 dark:border-slate-700">
+                            <p className="text-sm font-semibold text-on-surface">Vista previa en vivo</p>
+                            <p className="text-xs text-on-surface-variant mt-1">
+                              El cambio se aplica al instante y queda guardado en el navegador.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-on-surface mb-2">Tamaño de fuente</label>
-                  <div className="flex gap-2">
-                    {['small', 'medium', 'large'].map((size) => (
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-on-surface mb-2">Tamaño de fuente</label>
+                      <div className="flex gap-2 flex-wrap">
+                        {['small', 'medium', 'large'].map((size) => (
+                          <button
+                            key={size}
+                            type="button"
+                            onClick={() => setAppearance({ ...appearance, fontSize: size as 'small' | 'medium' | 'large' })}
+                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                              appearance.fontSize === size
+                                ? 'bg-[#202983] text-white'
+                                : 'bg-surface-container text-on-surface-variant'
+                            }`}
+                          >
+                            {size === 'small' ? 'Pequeño' : size === 'medium' ? 'Mediano' : 'Grande'}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-xl hover:bg-surface-container-low transition-colors">
+                      <div>
+                        <p className="text-sm font-medium text-on-surface">Modo compacto</p>
+                        <p className="text-xs text-on-surface-variant">Reducir espaciado en la interfaz</p>
+                      </div>
                       <button
-                        key={size}
-                        onClick={() => setAppearance({ ...appearance, fontSize: size })}
-                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                          appearance.fontSize === size
-                            ? 'bg-[#202983] text-white'
-                            : 'bg-surface-container text-on-surface-variant'
+                        type="button"
+                        onClick={() => setAppearance({ ...appearance, compactMode: !appearance.compactMode })}
+                        className={`relative w-11 h-6 rounded-full transition-colors ${
+                          appearance.compactMode ? 'bg-secondary' : 'bg-outline-variant'
                         }`}
                       >
-                        {size === 'small' ? 'Pequeño' : size === 'medium' ? 'Mediano' : 'Grande'}
+                        <span
+                          className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                            appearance.compactMode ? 'translate-x-5' : 'translate-x-0'
+                          }`}
+                        />
                       </button>
-                    ))}
+                    </div>
+                    <div className="rounded-xl border border-outline-variant bg-surface-container-low p-4 text-xs text-on-surface-variant">
+                      Los cambios se almacenan en `localStorage` para persistir entre sesiones.
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-xl hover:bg-surface-container-low transition-colors">
-                  <div>
-                    <p className="text-sm font-medium text-on-surface">Modo compacto</p>
-                    <p className="text-xs text-on-surface-variant">Reducir espaciado en la interfaz</p>
-                  </div>
-                  <button
-                    onClick={() => setAppearance({ ...appearance, compactMode: !appearance.compactMode })}
-                    className={`relative w-11 h-6 rounded-full transition-colors ${
-                      appearance.compactMode ? 'bg-secondary' : 'bg-outline-variant'
-                    }`}
-                  >
-                    <span
-                      className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                        appearance.compactMode ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
                 </div>
               </div>
             )}

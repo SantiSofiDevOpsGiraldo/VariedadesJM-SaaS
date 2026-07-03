@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
 import { Chatbot } from './Chatbot';
@@ -17,6 +18,7 @@ import {
   Store,
   ChevronRight,
 } from 'lucide-react';
+import { applyAppearance, loadAppearance } from '@/lib/appearance';
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -33,8 +35,12 @@ export function Layout() {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    applyAppearance(loadAppearance());
+  }, []);
+
   return (
-    <div className="flex h-screen bg-surface overflow-hidden">
+    <div className="flex h-screen bg-surface dark:bg-slate-950 dark:text-slate-100 overflow-hidden transition-colors">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -47,10 +53,10 @@ export function Layout() {
       <aside
         className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-outline-variant flex flex-col transition-transform duration-300 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
+        } dark:bg-slate-900 dark:border-slate-800`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center gap-3 px-5 border-b border-outline-variant">
+        <div className="h-16 flex items-center gap-3 px-5 border-b border-outline-variant dark:border-slate-800">
           <div className="w-10 h-10 bg-[#202983] rounded-xl flex items-center justify-center shadow">
             <Store className="w-6 h-6 text-white" />
           </div>
@@ -90,7 +96,7 @@ export function Layout() {
         </nav>
 
         {/* User section */}
-        <div className="p-3 border-t border-outline-variant">
+        <div className="p-3 border-t border-outline-variant dark:border-slate-800">
           <div className="flex items-center gap-3 px-3 py-2">
             <div className="w-9 h-9 bg-[#202983]/10 rounded-full flex items-center justify-center">
               <span className="text-[#202983] font-headline font-bold text-sm">
@@ -118,7 +124,7 @@ export function Layout() {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Topbar */}
-        <header className="h-16 bg-white border-b border-outline-variant flex items-center px-4 lg:px-6 shrink-0">
+        <header className="h-16 bg-white border-b border-outline-variant flex items-center px-4 lg:px-6 shrink-0 dark:bg-slate-900 dark:border-slate-800 transition-colors">
           <button
             className="lg:hidden p-2 hover:bg-surface-container rounded-lg mr-3"
             onClick={() => setSidebarOpen(true)}

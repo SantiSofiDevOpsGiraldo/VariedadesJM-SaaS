@@ -27,6 +27,7 @@ export interface Product {
   price: number;
   stock: number;
   img?: string;
+  imageUrl?: string;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -38,6 +39,7 @@ export interface ProductRequest {
   price: number;
   stock: number;
   img?: string;
+  imageUrl?: string;
   status: string;
 }
 

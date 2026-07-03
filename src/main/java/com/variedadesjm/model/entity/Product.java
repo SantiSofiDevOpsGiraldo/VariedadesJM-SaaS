@@ -50,6 +50,9 @@ public class Product {
     @Column(length = 500)
     private String img;
 
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private ProductStatus status;
