@@ -1,8 +1,10 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
-  headers: { 'Content-Type': 'application/json' },
+  baseURL: import.meta.env.VITE_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 api.interceptors.request.use((config) => {
@@ -21,6 +23,7 @@ api.interceptors.response.use(
       localStorage.removeItem('variedades_jm_user');
       window.location.href = '/';
     }
+
     return Promise.reject(error);
   }
 );
