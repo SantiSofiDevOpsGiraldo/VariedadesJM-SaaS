@@ -20,6 +20,7 @@ public class ProductResponse {
     private BigDecimal price;
     private Integer stock;
     private String img;
+    private String imageUrl;
     private ProductStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

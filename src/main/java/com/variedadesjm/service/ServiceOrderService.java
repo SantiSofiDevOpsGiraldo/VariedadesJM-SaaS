@@ -19,6 +19,7 @@ import com.variedadesjm.repository.CashTransactionRepository;
 import com.variedadesjm.repository.ServicePaymentRepository;
 import com.variedadesjm.repository.ServiceRepository;
 import com.variedadesjm.security.TenantContext;
+import com.variedadesjm.util.InputSanitizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,7 +101,7 @@ public class ServiceOrderService {
                 .session(activeSession)
                 .type(TransactionType.INGRESO)
                 .amount(request.getAmount())
-                .description("Abono a servicio #" + service.getId() + " - " + service.getTitle())
+            .description(InputSanitizer.clean("Abono a servicio #" + service.getId() + " - " + service.getTitle()))
                 .method(request.getMethod())
                 .referenceId("SERVICE-" + service.getId())
                 .build();

@@ -6,3 +6,5 @@ export const affiliateApi = {
   create: (data: any) => api.post('/affiliates', data),
   update: (id: number, data: any) => api.put(`/affiliates/${id}`, data),
 };
+ 
+

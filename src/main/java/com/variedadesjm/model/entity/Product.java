@@ -12,7 +12,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "products")
+@Table(
+    name = "products",
+    uniqueConstraints = @UniqueConstraint(name = "uk_products_company_code", columnNames = {"company_id", "code"})
+)
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
@@ -24,7 +27,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, length = 50)
     private String code;
 
     @Column(nullable = false, length = 150)
@@ -46,6 +49,9 @@ public class Product {
 
     @Column(length = 500)
     private String img;
+
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
