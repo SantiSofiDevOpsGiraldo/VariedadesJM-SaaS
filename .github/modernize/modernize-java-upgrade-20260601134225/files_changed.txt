@@ -1,0 +1,4 @@
+Files changed by this operation:
+- pom.xml: added maven-toolchains-plugin configuration
+- .github/maven/toolchains.xml: new file requesting JDK 21 (eclipse-temurin)
+- .github/modernize/modernize-java-upgrade-20260601134225/toolchains.md: documentation for CI/toolchains

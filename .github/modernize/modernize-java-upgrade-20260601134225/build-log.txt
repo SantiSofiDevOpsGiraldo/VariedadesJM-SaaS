@@ -1,0 +1,35 @@
+Build executed: mvn -B -DskipTests=false clean verify
+
+Run 1 (before changing plugin binding) - FAILURE
+--------------------------------------------------
+WARNING: A restricted method in java.lang.System has been called
+... (trimmed)
+[INFO] --- toolchains:3.1.0:toolchain (toolchain) @ backend-variedades-jm ---
+[INFO] Required toolchain: jdk [ vendor='eclipse-temurin' version='21' ]
+[ERROR] No toolchain found for type jdk
+[ERROR] Cannot find matching toolchain definitions for the following toolchain types:
+jdk [ vendor='eclipse-temurin' version='21' ]
+[ERROR] Please make sure you define the required toolchains in your ~/.m2/toolchains.xml file.
+
+Run 2 (after making plugin non-binding) - SUCCESS
+--------------------------------------------------
+WARNING: A restricted method in java.lang.System has been called
+... (trimmed)
+[INFO] Scanning for projects...
+[INFO] ---------------< com.variedadesjm:backend-variedades-jm >---------------
+[INFO] Building Variedades JM - POS Backend 1.0.0
+[INFO] --- enforcer:3.2.1:enforce (enforce-java) @ backend-variedades-jm ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] --- compiler:3.11.0:compile (default-compile) @ backend-variedades-jm ---
+[INFO] Compiling 83 source files with javac [debug release 21] to target\classes
+[INFO] --- jar:3.3.0:jar (default-jar) @ backend-variedades-jm ---
+[INFO] Building jar: target\backend-variedades-jm-1.0.0.jar
+
+Result: SUCCESS
+Notes: Build completed without errors; no tests were found to run.
+
+Files committed in branch: modernize/java-20260601134225-toolchains
+- pom.xml (maven-toolchains-plugin configured, non-binding)
+- .github/maven/toolchains.xml (repository-scoped toolchain requesting JDK21 temurin)
+- .github/modernize/modernize-java-upgrade-20260601134225/toolchains.md
+
