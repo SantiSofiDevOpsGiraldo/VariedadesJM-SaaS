@@ -7,3 +7,31 @@ target/
 
 dist/
 *.tsbuildinfo
+# Dependencias
+node_modules/
+
+# Java
+target/
+*.jar
+*.class
+
+# IDE
+.idea/
+.vscode/
+
+# Frontend
+dist/
+*.tsbuildinfo
+.apps.tsbuildinfo
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
