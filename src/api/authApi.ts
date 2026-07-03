@@ -1,10 +1,10 @@
 import api from './axios';
 
 export const authApi = {
-  login: (data: { username: string; password: string }) => api.post('/auth/login', data),
-  register: (data: { username: string; password: string; fullName: string; email: string; role: string }) => api.post('/auth/register', data),
-  oauthGoogle: (data: { idToken: string }) => api.post('/auth/oauth/google', data),
-  oauthGoogleCallback: (data: { code: string }) => api.post('/auth/oauth/google/callback', data),
+  login: (data: { username: string; password: string }) => api.post('/api/auth/login', data),
+  register: (data: { username: string; password: string; fullName: string; email: string; role: string }) => api.post('/api/auth/register', data),
+  oauthGoogle: (data: { idToken: string }) => api.post('/api/auth/oauth/google', data),
+  oauthGoogleCallback: (data: { code: string }) => api.post('/api/auth/oauth/google/callback', data),
   completeOnboarding: (data: {
     companyName: string;
     legalName: string;
@@ -14,6 +14,6 @@ export const authApi = {
     address: string;
     city: string;
     country: string;
-  }) => api.post('/auth/onboarding/company', data),
-  me: () => api.get('/auth/me'),
+  }) => api.post('/api/auth/onboarding/company', data),
+  me: () => api.get('/api/auth/me'),
 };
