@@ -10,12 +10,12 @@ public class HomeController {
     @GetMapping("/")
     public Map<String, Object> home() {
         return Map.of(
-                "project", "Variedades JM",
+                "application", "Variedades JM API",
                 "status", "online",
+                "message", "Backend operativo y listo para la sustentación",
                 "version", "1.0.0",
                 "framework", "Spring Boot 3",
                 "database", "MySQL",
-                "cloud", "Render",
                 "author", "Enrique Giraldo"
         );
     }
