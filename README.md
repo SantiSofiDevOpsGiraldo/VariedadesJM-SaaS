@@ -53,7 +53,7 @@ Desarrollar un sistema POS tipo SaaS que optimice la gestión operativa de peque
 
 ### Backend
 
-* Java 17
+* Java 25
 * Spring Boot
 * Maven
 * MySQL
@@ -117,7 +117,7 @@ VariedadesJM_JAVA/
 
 ## ⚙️ Requisitos del Sistema
 
-* Java 17 o superior
+* Java 25 o superior
 * Maven 3.9 o superior
 * Node.js 20 o superior
 * MySQL 8.0 o superior

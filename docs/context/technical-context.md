@@ -3,7 +3,7 @@
 ## Stack Tecnológico
 
 ### Backend
-- **Lenguaje**: Java 17
+- **Lenguaje**: Java 25
 - **Framework**: Spring Boot 3.2.5
 - **Persistencia**: Spring Data JPA con MySQL
 - **Migraciones**: Flyway
