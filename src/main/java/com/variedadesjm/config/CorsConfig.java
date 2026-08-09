@@ -14,16 +14,14 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        // Use ONLY setAllowedOriginPatterns — mixing with setAllowedOrigins causes patterns to be ignored
         configuration.setAllowedOriginPatterns(List.of(
+            "http://localhost",
             "http://localhost:*",
-            "https://*.vercel.app"
+            "https://*.vercel.app",
+            "https://variedades-jm.vercel.app"
         ));
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://localhost:4173"
-        ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
@@ -33,3 +31,4 @@ public class CorsConfig {
         return source;
     }
 }
+
