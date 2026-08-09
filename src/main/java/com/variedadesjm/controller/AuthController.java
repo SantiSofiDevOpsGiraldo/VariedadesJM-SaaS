@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.*;
                 "http://127.0.0.1:*",
                 "https://*.vercel.app",
                 "https://variedades-jm.vercel.app",
-                "https://variedades-jm-saa-s.vercel.app"
+                "https://variedades-jm-saa-s.vercel.app",
+                "https://*.onrender.com",
+                "https://variedadesjm-saas.onrender.com"
         },
         allowCredentials = "true",
         allowedHeaders = {"*"},

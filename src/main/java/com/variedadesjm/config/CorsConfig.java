@@ -21,10 +21,12 @@ public class CorsConfig {
             "http://127.0.0.1:*",
             "https://*.vercel.app",
             "https://variedades-jm.vercel.app",
-            "https://variedades-jm-saa-s.vercel.app"
+            "https://variedades-jm-saa-s.vercel.app",
+            "https://*.onrender.com",
+            "https://variedadesjm-saas.onrender.com"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
@@ -33,4 +35,8 @@ public class CorsConfig {
         return source;
     }
 }
+
+
+
+
 
