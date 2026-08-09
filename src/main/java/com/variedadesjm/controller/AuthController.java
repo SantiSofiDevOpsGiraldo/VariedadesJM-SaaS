@@ -13,6 +13,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(
+        origins = {
+                "http://localhost",
+                "http://localhost:*",
+                "http://127.0.0.1",
+                "http://127.0.0.1:*",
+                "https://*.vercel.app",
+                "https://variedades-jm.vercel.app",
+                "https://variedades-jm-saa-s.vercel.app"
+        },
+        allowCredentials = "true",
+        allowedHeaders = {"*"},
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH, RequestMethod.OPTIONS}
+)
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
