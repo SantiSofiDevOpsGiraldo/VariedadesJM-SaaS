@@ -93,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
     const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/auth/google/callback`;
     if (!clientId) {
-      setError('Google OAuth no está configurado en el frontend. Configure VITE_GOOGLE_CLIENT_ID.');
+      setError('Google OAuth no está configurado en el frontend. Revise VITE_GOOGLE_CLIENT_ID en .env o .env.production y reinicie la app.');
       return;
     }
 
@@ -265,7 +265,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             <div className="mt-4">
               <button onClick={() => setIsRegister(true)} className="w-full mb-2 text-sm text-[#202983] underline">Crear cuenta</button>
-              <button onClick={handleGoogleSignIn} className="w-full bg-white border border-outline-variant text-[#202983] py-2 rounded-xl">Iniciar con Google</button>
+              <button type="button" onClick={handleGoogleSignIn} className="w-full bg-white border border-outline-variant text-[#202983] py-2 rounded-xl">Continuar con Google</button>
             </div>
 
             <p className="text-center text-xs text-outline mt-6">

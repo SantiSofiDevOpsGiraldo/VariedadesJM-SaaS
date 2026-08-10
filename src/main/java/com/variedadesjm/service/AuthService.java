@@ -7,10 +7,12 @@ import com.variedadesjm.model.dto.auth.LoginRequest;
 import com.variedadesjm.model.dto.auth.OnboardingRequest;
 import com.variedadesjm.model.dto.auth.RegisterRequest;
 import com.variedadesjm.model.entity.Company;
+import com.variedadesjm.model.entity.UserIdentity;
 import com.variedadesjm.model.entity.User;
 import com.variedadesjm.model.enums.IdentityProvider;
 import com.variedadesjm.model.enums.UserRole;
 import com.variedadesjm.repository.CompanyRepository;
+import com.variedadesjm.repository.UserIdentityRepository;
 import com.variedadesjm.repository.UserRepository;
 import com.variedadesjm.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.jwt.JwtValidators;
+
+import java.util.Objects;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +47,7 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
+    private final UserIdentityRepository userIdentityRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${google.client.clientId:}")
@@ -55,6 +72,7 @@ public class AuthService {
     }
 
     @Transactional
+    @SuppressWarnings("null")
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new BusinessException("Ya existe un usuario con el nombre: " + request.getUsername());
@@ -75,7 +93,7 @@ public class AuthService {
                 .active(true)
                 .build();
 
-        user = userRepository.save(user);
+        user = Objects.requireNonNull(userRepository.save(user));
         return toAuthResponse(user, tokenProvider.generateToken(user));
     }
 
@@ -87,33 +105,16 @@ public class AuthService {
     @Transactional
     public AuthResponse oauthGoogle(String idToken) {
         try {
-            java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
-            java.net.http.HttpRequest req = java.net.http.HttpRequest.newBuilder()
-                    .uri(java.net.URI.create("https://oauth2.googleapis.com/tokeninfo?id_token=" + idToken))
-                    .GET()
-                    .build();
+            Jwt payload = verifyGoogleIdToken(idToken);
+            return authenticateGooglePayload(payload);
 
-            java.net.http.HttpResponse<String> resp = client.send(req, java.net.http.HttpResponse.BodyHandlers.ofString());
-            if (resp.statusCode() != 200) {
-                throw new BusinessException("Token de Google inválido");
-            }
-
-            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            java.util.Map<String, Object> payload = mapper.readValue(resp.body(), java.util.Map.class);
-
-            String email = (String) payload.get("email");
-            String name = (String) payload.get("name");
-            if (email == null) throw new BusinessException("Google token no contiene email");
-
-            User user = userRepository.findByEmail(email).orElseGet(() -> createIdentityUser(email, name, IdentityProvider.GOOGLE));
-            return toAuthResponse(user, tokenProvider.generateToken(user));
-
-        } catch (java.io.IOException | InterruptedException e) {
+        } catch (JwtException e) {
             throw new BusinessException("Error validando token de Google: " + e.getMessage());
         }
     }
 
     @Transactional
+    @SuppressWarnings("null")
     public AuthResponse oauthGoogleCallback(String code) {
         if (googleClientId == null || googleClientId.isBlank() || googleClientSecret == null || googleClientSecret.isBlank()) {
             throw new BusinessException("Google OAuth client ID/secret no están configurados en el servidor");
@@ -145,34 +146,27 @@ public class AuthService {
             }
 
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            java.util.Map<String, Object> tokenResp = mapper.readValue(resp.body(), java.util.Map.class);
+                Map<String, Object> tokenResp = mapper.readValue(
+                    resp.body(),
+                    new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {}
+                );
             String idToken = (String) tokenResp.get("id_token");
-            if (idToken == null) throw new BusinessException("Google token endpoint no devolvió id_token");
-
-            java.net.http.HttpRequest validateReq = java.net.http.HttpRequest.newBuilder()
-                    .uri(java.net.URI.create("https://oauth2.googleapis.com/tokeninfo?id_token=" + idToken))
-                    .GET()
-                    .build();
-
-            java.net.http.HttpResponse<String> validateResp = client.send(validateReq, java.net.http.HttpResponse.BodyHandlers.ofString());
-            if (validateResp.statusCode() != 200) {
-                throw new BusinessException("Token de Google inválido durante validación");
+            if (idToken == null) {
+                throw new BusinessException("Google token endpoint no devolvió id_token");
             }
 
-            java.util.Map<String, Object> payload = mapper.readValue(validateResp.body(), java.util.Map.class);
-            String email = (String) payload.get("email");
-            String name = (String) payload.get("name");
-            if (email == null) throw new BusinessException("Google token no contiene email");
-
-            User user = userRepository.findByEmail(email).orElseGet(() -> createIdentityUser(email, name, IdentityProvider.GOOGLE));
-            return toAuthResponse(user, tokenProvider.generateToken(user));
+            Jwt payload = verifyGoogleIdToken(idToken);
+            return authenticateGooglePayload(payload);
 
         } catch (java.io.IOException | InterruptedException e) {
             throw new BusinessException("Error intercambiando/validando token de Google: " + e.getMessage());
+        } catch (JwtException e) {
+            throw new BusinessException("Error validando token de Google: " + e.getMessage());
         }
     }
 
     @Transactional
+    @SuppressWarnings("null")
     public AuthResponse completeOnboarding(String username, OnboardingRequest request) {
         User user = getCurrentUser(username);
 
@@ -199,7 +193,7 @@ public class AuthService {
                 .country(request.getCountry())
                 .active(true)
                 .build();
-        company = companyRepository.save(company);
+        company = Objects.requireNonNull(companyRepository.save(company));
 
         user.setCompany(company);
         user.setRole(UserRole.OWNER);
@@ -207,7 +201,7 @@ public class AuthService {
         if (user.getAuthProvider() == null) {
             user.setAuthProvider(IdentityProvider.EMAIL);
         }
-        user = userRepository.save(user);
+        user = Objects.requireNonNull(userRepository.save(user));
 
         return toAuthResponse(user, tokenProvider.generateToken(user));
     }
@@ -218,18 +212,124 @@ public class AuthService {
         return toAuthResponse(user, tokenProvider.generateToken(user));
     }
 
+    @SuppressWarnings("null")
     private User createIdentityUser(String email, String name, IdentityProvider provider) {
+        String baseUsername = buildUniqueUsername(email);
         User user = User.builder()
-                .username(email.split("@")[0])
+                .username(baseUsername)
                 .email(email)
-                .password(passwordEncoder.encode(java.util.UUID.randomUUID().toString()))
+                .password(null)
                 .fullName(name != null ? name : email)
                 .authProvider(provider)
                 .role(UserRole.EMPLOYEE)
                 .active(true)
                 .onboardingCompleted(false)
                 .build();
-        return userRepository.save(user);
+        return Objects.requireNonNull(userRepository.save(user));
+    }
+
+    private AuthResponse authenticateGooglePayload(Jwt payload) {
+        String email = payload.getClaimAsString("email");
+        Boolean emailVerified = payload.getClaimAsBoolean("email_verified");
+        String providerUserId = payload.getSubject();
+        String name = payload.getClaimAsString("name");
+
+        if (email == null || email.isBlank()) {
+            throw new BusinessException("Google token no contiene email");
+        }
+        if (providerUserId == null || providerUserId.isBlank()) {
+            throw new BusinessException("Google token no contiene sub");
+        }
+
+        UserIdentity linkedIdentity = userIdentityRepository
+                .findByProviderAndProviderUserId(IdentityProvider.GOOGLE, providerUserId)
+                .orElse(null);
+
+        User user;
+        if (linkedIdentity != null) {
+            user = linkedIdentity.getUser();
+        } else {
+            Optional<User> existingUser = userRepository.findByEmail(email);
+            if (existingUser.isPresent()) {
+                if (!Boolean.TRUE.equals(emailVerified)) {
+                    throw new BusinessException("El correo de Google no está verificado, no se puede vincular la cuenta.");
+                }
+                user = existingUser.get();
+                linkGoogleIdentity(user, providerUserId);
+            } else {
+                user = createIdentityUser(email, name, IdentityProvider.GOOGLE);
+                linkGoogleIdentity(user, providerUserId);
+            }
+        }
+
+        return toAuthResponse(user, tokenProvider.generateToken(user));
+    }
+
+    @SuppressWarnings("null")
+    private void linkGoogleIdentity(User user, String providerUserId) {
+        if (userIdentityRepository.existsByUser_IdAndProvider(user.getId(), IdentityProvider.GOOGLE)) {
+            return;
+        }
+
+        UserIdentity identity = UserIdentity.builder()
+                .user(user)
+                .provider(IdentityProvider.GOOGLE)
+                .providerUserId(providerUserId)
+                .build();
+        userIdentityRepository.save(Objects.requireNonNull(identity));
+    }
+
+    private String buildUniqueUsername(String email) {
+        String localPart = email.split("@")[0].toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9._-]", "");
+        String candidate = localPart.isBlank() ? "usuario" : localPart;
+        int suffix = 1;
+
+        while (userRepository.existsByUsername(candidate)) {
+            candidate = localPart + "_" + suffix++;
+        }
+
+        return candidate;
+    }
+
+    private Jwt verifyGoogleIdToken(String idToken) {
+        return buildGoogleJwtDecoder().decode(idToken);
+    }
+
+    private JwtDecoder buildGoogleJwtDecoder() {
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri("https://www.googleapis.com/oauth2/v3/certs").build();
+        OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(
+                JwtValidators.createDefault(),
+                jwt -> {
+                    String issuer = jwt.getClaimAsString("iss");
+                    boolean validIssuer = "https://accounts.google.com".equals(issuer) || "accounts.google.com".equals(issuer);
+                    if (!validIssuer) {
+                        return org.springframework.security.oauth2.core.OAuth2TokenValidatorResult.failure(
+                                new OAuth2Error("invalid_token", "Issuer de Google inválido", null)
+                        );
+                    }
+                    return org.springframework.security.oauth2.core.OAuth2TokenValidatorResult.success();
+                },
+                jwt -> {
+                    Object audience = jwt.getClaims().get("aud");
+                    boolean matches = false;
+                    if (audience instanceof String audString) {
+                        matches = googleClientId.equals(audString);
+                    } else if (audience instanceof List<?> audList) {
+                        matches = audList.contains(googleClientId);
+                    }
+
+                    if (!matches) {
+                        return org.springframework.security.oauth2.core.OAuth2TokenValidatorResult.failure(
+                                new OAuth2Error("invalid_token", "Google token con audience incorrecta", null)
+                        );
+                    }
+
+                    return org.springframework.security.oauth2.core.OAuth2TokenValidatorResult.success();
+                }
+        );
+        decoder.setJwtValidator(validator);
+        return decoder;
     }
 
     private AuthResponse toAuthResponse(User user, String token) {

@@ -27,24 +27,34 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route element={<Layout />}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/sales" element={<Sales />} />
-                <Route path="/inventory" element={<Inventory />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/cash" element={<Cash />} />
-                <Route path="/affiliates" element={<Affiliates />} />
-                <Route path="/reports" element={<Reports />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/onboarding" element={<Navigate to="/" replace />} />
-                <Route path="/auth/google/callback" element={<GoogleOAuthCallback />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Ruta pública: callback de Google OAuth — debe estar FUERA de AuthProvider */}
+            <Route path="/auth/google/callback" element={<GoogleOAuthCallback />} />
+
+            {/* Rutas protegidas: AuthProvider controla el acceso */}
+            <Route
+              path="/*"
+              element={
+                <AuthProvider>
+                  <Routes>
+                    <Route element={<Layout />}>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/sales" element={<Sales />} />
+                      <Route path="/inventory" element={<Inventory />} />
+                      <Route path="/services" element={<Services />} />
+                      <Route path="/cash" element={<Cash />} />
+                      <Route path="/affiliates" element={<Affiliates />} />
+                      <Route path="/reports" element={<Reports />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="/onboarding" element={<Navigate to="/" replace />} />
+                    </Route>
+                  </Routes>
+                </AuthProvider>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>
   );

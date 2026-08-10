@@ -26,6 +26,10 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Usuario inactivo: " + username);
         }
 
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            throw new UsernameNotFoundException("El usuario " + username + " solo puede iniciar sesión con Google");
+        }
+
         List<SimpleGrantedAuthority> authorities = List.of(
                 new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
         );
