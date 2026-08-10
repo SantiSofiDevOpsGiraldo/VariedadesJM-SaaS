@@ -52,11 +52,14 @@ services:
   # ──────────────────────────────────────────────
   # React Frontend (Nginx)
   # ──────────────────────────────────────────────
+  
+  
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
       args:
+        VITE_API_URL: ""
         VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
         VITE_GOOGLE_REDIRECT_URI: ${VITE_GOOGLE_REDIRECT_URI:-http://localhost/auth/google/callback}
     container_name: variedades-jm-frontend
@@ -68,6 +71,7 @@ services:
     networks:
       - variedades-jm-network
 
+#
 # ──────────────────────────────────────────────
 # Volumes
 # ──────────────────────────────────────────────
