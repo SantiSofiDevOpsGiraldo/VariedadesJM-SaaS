@@ -14,12 +14,16 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Use ONLY setAllowedOriginPatterns — mixing with setAllowedOrigins causes patterns to be ignored
         configuration.setAllowedOriginPatterns(List.of(
             "http://localhost",
             "http://localhost:*",
+            "http://127.0.0.1",
+            "http://127.0.0.1:*",
             "https://*.vercel.app",
-            "https://variedades-jm.vercel.app"
+            "https://variedades-jm.vercel.app",
+            "https://variedades-jm-saa-s.vercel.app",
+            "https://*.onrender.com",
+            "https://variedadesjm-saas.onrender.com"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
@@ -31,4 +35,8 @@ public class CorsConfig {
         return source;
     }
 }
+
+
+
+
 
